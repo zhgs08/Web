@@ -36,6 +36,8 @@ class EditableRecipe extends React.Component {
     this.closeForm();
   };
 
+
+  
   render() {
     if (this.state.editFormOpen) {
       return (
@@ -43,6 +45,8 @@ class EditableRecipe extends React.Component {
           id={this.props.id}
           title={this.props.title}
           description={this.props.description}
+          img={this.props.img}
+          category={this.props.category}
           onFormSubmit={this.handleSubmit}
           onFormClose={this.handleFormClose}
         />
@@ -53,6 +57,8 @@ class EditableRecipe extends React.Component {
           id={this.props.id}
           title={this.props.title}
           description={this.props.description}
+          img={this.props.img}
+          category={this.props.category}
           onEditClick={this.handleEditClick}
           onTrashClick={this.props.onTrashClick}
         />

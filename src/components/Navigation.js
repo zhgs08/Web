@@ -1,25 +1,25 @@
 import React from 'react';
 import {Route, NavLink, HashRouter } from 'react-router-dom';
 import Home from './Home';
-import Login from './Login';
-import RecipeMain from './RecipeMain';
+import Category from './Category';
+import Recipe from '../Recipe'
 
 class Navigation extends React.Component {
 	render() {
     return (
       <HashRouter>
       <div className='container'>
-              		<div className="navbar navbar-expand-lg bg-dark navbar-dark">
+              		<div className="navbar">
                 			<ul className="navbar-nav">
-                  			<NavLink className="nav-link" to="/"><i className="home icon" /></NavLink>
-                        <NavLink className="nav-link" to="/addrecipe"> Add Recipe </NavLink>
-                        <NavLink className="nav-link" to="/login"> Sing in </NavLink>
+                  			<NavLink className="nav-link" to="/"><i className="home large icon" /></NavLink>
+                        <NavLink className="nav-link" to="/category"> Category </NavLink>
+                        <NavLink className="nav-link" to="/recipes"> Recipe </NavLink>
                   		</ul>
               		</div>
               		<div>
                 		<Route exact path = "/" component={Home}/>
-                    <Route exact path = "/addrecipe" component={RecipeMain}/>
-                    <Route exact path = "/login" component={Login}/>
+                    <Route exact path = "/category" component={Category}/>
+                    <Route exact path = "/recipes" component={Recipe}/>
               		</div>
              
         </div>

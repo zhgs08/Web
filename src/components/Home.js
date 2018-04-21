@@ -1,46 +1,56 @@
 import React from 'react';
 import EditableRecipeList from './EditableRecipeList';
 import ToggleableRecipeForm from './ToggleableRecipeForm';
-import CommentRecipeList from './CommentRecipeList';
-import ToggleableCommentForm from './ToggleableCommentForm';
 import helpers from '../utils/helpers';
+import Login from './Login';
+
+import client from '../client'
 
 class Home extends React.Component {
 	constructor(props) {
     super(props);
 
     this.state = {
-      recipes: [
-        {
-          description: "Test description 1",
-          title: "Test title 1",
-          id: helpers.guid(),
-        },
-        {
-          description: "Test description 2",
-          title: "Test title 2",
-          id: helpers.guid(),
-        }
-      ],
+      recipes: [],
+      username: 'zhgs',
+      password: 'zhgs',
+     
       comments: [
         {
-          username: "zhgs",
-          userComment: "tasty",
+          id: "",
+          username: "",
+          userComment: "",
         },
-      ]
+      ],
+      text: '',
     };
   }
 
+  componentDidMount(){
+    client.getRecipes((recipes) => {
+      this.setState({
+        recipes: recipes
+      });
+    });
+  }
  
   handleCreateFormSubmit = (recipe) => {
     this.createRecipe(recipe);
   };
 
   createRecipe = (recipe) => {
-    const t = helpers.newRecipe(recipe);
-    this.setState({
-      recipes: this.state.recipes.concat(t),
-    });
+    const data = helpers.newRecipe(recipe);
+    
+    client.createRecipe(data, (recipe) => {
+        console.log(recipe)
+      if (recipe)
+        this.setState({
+          recipes: [...this.state.recipes, recipe],
+          title: '',
+          description: '',
+          category: '',
+        });
+    });  
   };
 
 
@@ -50,7 +60,12 @@ class Home extends React.Component {
 
 
   updateRecipe = (newRecipe) => {
-  
+    console.log(newRecipe)
+
+    client.updateRecipe(newRecipe, (response) => {
+      console.log(response)
+    });
+
     const newArr = this.state.recipes.map((recipe) => {
       if (recipe.id === newRecipe.id) {
         return Object.assign({}, recipe, {
@@ -61,7 +76,7 @@ class Home extends React.Component {
         return recipe;
       }
     });
-    
+      
     this.setState({
       recipes: newArr,
     });    
@@ -77,6 +92,7 @@ class Home extends React.Component {
     const newArr = this.state.comments.map((comment) => {
       if (comment.id === newComment.id) {
         return Object.assign({}, comment, {
+          comments: newArr,
           username: newComment.username,
           userComment: newComment.userComment,
         });
@@ -99,28 +115,49 @@ class Home extends React.Component {
     this.setState({
       recipes: this.state.recipes.filter(recipe => recipe.id !== recipeId),
     })
+    client.deleteRecipe(recipeId, (recipe) => {
+      if(recipe)
+        console.log('Deleted!')
+    });
   };
 
-	render() {
-	    return (
-		    	<div className="gtco-container">
-			    	<div className="row">
-  						<div className="col-md-8 col-md-offset-2 text-center gtco-heading">
-  							<h2 className="cursive-font primary-color">Popular Dishes</h2>
-  							<p>All in Good Taste!</p>
-  						</div>
-					  </div>
-					  <EditableRecipeList
-			            recipes={this.state.recipes}
-			            onFormSubmit={this.handleEditFormSubmit}
-			            onTrashClick={this.handleTrashClick}
-			      />
-			      <ToggleableRecipeForm
-			            onFormSubmit={this.handleCreateFormSubmit}
-			      />
-				</div>
-    	);
-  	}
+  handleChangeUsername (text) {
+    this.setState ({username: text});
+  }
+
+  handleChangePassword (text) {
+    this.setState ({password: text});
+  }
+
+
+  render() {
+    if (!this.state.username || !this.state.password) {
+      return (
+        <div>
+          <Login />
+        </div>
+      );
+    }
+    return (
+      <div className="gtco-container">
+              <div className="fh5co-text">
+                <div className='extra content'>
+                         
+                <EditableRecipeList
+                  recipes={this.state.recipes}
+                  onFormSubmit={this.handleEditFormSubmit}
+                  onTrashClick={this.handleTrashClick}
+                />
+                <ToggleableRecipeForm
+                  onFormSubmit={this.handleCreateFormSubmit}
+                />
+                  
+              </div>
+            </div>
+          </div>
+  
+    );
+  }
 }
 
 export default Home;
